@@ -1,293 +1,274 @@
-# Rooting Samsung Galaxy A05s (SM-A057F) — End-to-End Guide
+# Rooting Samsung Galaxy A05s (SM-A057F) — Complete Guide
 
-> Survives a factory reset. Everything needed is here.
+> Written <CAPTURE_DATE> from a live inspection of this exact device.
+> Every fact below was verified unless marked *(community report)*.
 
 ---
 
-## 0. Device facts (verified)
+## 📖 Where to start
+
+| If you want… | Read |
+|---|---|
+| The whole thing, start to finish | This file, top to bottom |
+| Just the steps, with expected output at each | [docs/DETAILED-GUIDE.md](docs/DETAILED-GUIDE.md) |
+| A printable tick-list | [CHECKLIST.md](CHECKLIST.md) |
+| Something went wrong | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
+| It's bricked / won't boot | [docs/RECOVERY.md](docs/RECOVERY.md) |
+| Already rooted — now what | [docs/POST-ROOT.md](docs/POST-ROOT.md) |
+| Change my mind / undo it | [docs/UNROOT.md](docs/UNROOT.md) |
+| Security state of this phone | [docs/security-findings.md](docs/security-findings.md) |
+| Tools I set up on the phone | [docs/TOOLS.md](docs/TOOLS.md) |
+
+---
+
+## ⚠️ Read this before anything else
+
+### I cannot promise 100%
+
+You asked me to guarantee this works. I can't, and anyone who says otherwise is selling something. Here's the honest position:
+
+**What is verified about your specific device:**
+- Model is `SM-A057F/DS`, international variant — has a working OEM-unlock toggle
+- Android 15 / One UI 7, build `<YOUR_BUILD_FINGERPRINT>`
+- Odin + patched `init_boot.img` is the documented working path
+- Root is achievable on this model *(community reports)*
+
+**What cannot be verified without a PC, a reboot, and risking the device:**
+- Whether your bootloader unlocks cleanly on the first attempt
+- Whether Samsung's 7-day KG timer is already satisfied
+- Whether firmware for your exact build + CSC `BD` is downloadable
+- Whether AVB will accept the patched image on your firmware revision
+
+Realistically this is a **high-confidence** procedure with normal failure modes, not a certainty. The failure modes are all recoverable — see [docs/RECOVERY.md](docs/RECOVERY.md) — but the process can cost you an afternoon and a factory reset.
+
+### Irreversible consequences
+
+| Consequence | Detail |
+|---|---|
+| **Knox trips — permanently** | Never resets, even by reflashing stock. Samsung Pay, Secure Folder, and most banking/DRM apps stop working forever. |
+| **OTA updates disabled** | You will only be able to update by manually reflashin via Odin. |
+| **Warranty** | Samsung will deny service for an unlocked bootloader. |
+| **Data** | 52 GB of your data is at risk. Flash `CSC` to wipe; `HOME_CSC` or AP-only preserves. |
+
+### Hard requirements
+
+- [x] **Windows PC** — Odin has no Linux/macOS equivalent. This is not optional.
+- [x] **Data-capable USB cable** — not a charge-only cable
+- [ ] ~25 GB free on the PC (the `AP` firmware is ~7 GB, plus extracted images)
+- [ ] Phone charged above 60%
+
+### 🚫 Never install these
+
+**KingRoot**, **KingoRoot**, **iRoot**, and any "root without PC" app are documented malware / PUP vectors. Many ship a real root backdoor and keep it permanently — which would directly defeat the purpose of rooting safely. Only use **Magisk** from `github.com/topjohnwu/Magisk`.
+
+---
+
+## Device facts (verified on your phone)
 
 | Property | Value |
 |---|---|
-| Model | **Samsung Galaxy A05s, SM-A057F/DS** |
-| Variant | **International** (has OEM-unlock toggle) — the rootable one |
+| Model | **Samsung Galaxy A05s SM-A057F/DS** |
+| Variant | International — the unlockable one |
 | Chipset | MediaTek Helio G80 (MT6765), octa-core, aarch64 |
-| Build fingerprint | `<YOUR_BUILD_FINGERPRINT>` |
-| OS | Android 15 / One UI 7 (originally shipped Android 13) |
-| Security patch | **<EARLIER_PATCH_DATE>** ⚠️ see [Step 1](#step-1--update-via-ota-first) |
-| SELinux | **Enforcing** |
-| Bootloader | Unlockable (international variant) |
-| TWRP / fastboot | **Neither works.** Odin is the only route. |
+| Firmware | `<YOUR_BUILD_FINGERPRINT>` |
+| OS | Android 15 / One UI 7 (first shipped Android 13) |
+| Security patch | **<EARLIER_PATCH_DATE>** ⚠️ ~21 months stale |
+| SELinux | Enforcing |
+| Storage | <DEVICE_STORAGE_REDACTED> |
+| Root / bootloader | None currently |
 
 Fingerprint decode:
 
 ```
-AP3A      -> Android 15 platform
-240905    -> security patch <EARLIER_PATCH_DATE>
-A2A057F   -> model A057F
-SBDYJ1    -> region BD (Bangladesh)
-SEPF_SM-A057F_13_0001 -> SM-A057F, first shipped Android 13
+AP3A                        -> Android 15 platform
+240905                      -> security patch <EARLIER_PATCH_DATE>
+A2A057F                     -> model A057F
+SBDYJ1                      -> region BD (Bangladesh)
+SEPF_SM-A057F_13_0001       -> SM-A057F, first shipped Android 13
 ```
 
----
-
-## ⚠️ Read before starting
-
-- **A Windows PC and USB cable are mandatory.** No PC = no Odin = no root. There is no Termux-only path on this device.
-- **Knox trips permanently.** Irreversible, even by reflashing stock firmware. Samsung Pay, Secure Folder, and most banking apps stop working forever.
-- **OTA updates die after rooting.** You will only be able to update by reflashing firmware manually via Odin.
-- **Backup everything first.** See [Step 3](#step-3--back-up-everything).
-
-### 🚫 Never use these
-
-**KingRoot**, **KingoRoot**, and any "root without PC" app are documented malware / PUP vectors. Many are trojans that grant real root and keep it. Avoid them.
-
-Only use **Magisk** from the official source:
-`https://github.com/topjohnwu/Magisk/releases` (verify the release page exists and is the official repo).
+> Note: `/sys/devices/soc0/family` reports "Snapdragon" on this device — that string is inherited from reused kernel code and is **wrong**. It is a MediaTek part.
 
 ---
 
-## Step 0 — Prerequisites
+## Step 1 — Update via OTA first ⚠️
 
-- [ ] Windows PC (Win10/11)
-- [ ] USB cable (data-capable, not charge-only)
-- [ ] Samsung USB drivers installed on the PC
-- [ ] Odin **3.13.x or newer** on the PC
-- [ ] `Frija` (queries Samsung's official FUS server) **or** access to samfw.com
-- [ ] `adb` (Android platform-tools) — on PC or on the phone via Termux
-- [ ] ~20 GB free on the PC (the AP firmware is ~7 GB)
+Your patch level is **<EARLIER_PATCH_DATE>**. Samsung has shipped **2026-05-05** firmware for this model. You are ~21 months behind on a device still receiving updates.
 
----
+**Do this before rooting:**
 
-## Step 1 — Update via OTA FIRST
+> Settings → Software update → Download and install
 
-Your security patch is **<EARLIER_PATCH_DATE>**. Samsung has shipped **2026-05-05** firmware for this model — you are roughly 21 months behind on a device that still receives updates.
+Three reasons the order matters:
 
-**Update before rooting.** Settings → Software update → Download and install.
+1. **After rooting, OTA is dead.** This is your last one-tap update, ever.
+2. **You want to patch a current `init_boot`**, not a 2024 one.
+3. A stale patch on a current OS is worth ruling out regardless of rooting.
 
-Why this ordering matters:
-1. Once rooted, **OTA is disabled** — this is your last easy update.
-2. You want to patch a *current* boot image, not a 2024 one.
-3. A stale patch on a current OS is worth ruling out on its own.
-
-**Write down the new build number** — Step 4 requires firmware matching it exactly.
+**Record the new build number** — Step 3 requires firmware matching it exactly.
 
 ---
 
-## Step 2 — The go/no-go gate
+## Step 2 — Confirm you can unlock
 
-Settings → About phone → tap **Build number** 7 times → Developer options.
+> Settings → About phone → **Build number** ×7 → Developer options
 
-| State | Action |
+| What you see | Verdict |
 |---|---|
-| **OEM unlocking** toggle present and turns ON | ✅ Go |
-| Present but OFF | Turn it ON now |
-| Greyed out, "Connect to internet…" | Reconnect mobile data, retry |
-| Missing entirely | ❌ Carrier-locked variant — **cannot be rooted**, stop |
+| **OEM unlocking** toggle present, turns ON | ✅ proceed |
+| Present but OFF | Turn it ON |
+| Greyed, "Connect to internet…" | Reconnect mobile data, retry |
+| **Missing entirely** | ❌ carrier-locked — cannot be rooted. Stop. |
 
-Also enable **USB debugging** — Step 5 uses it.
+Also enable **USB debugging** — Step 5 uses adb.
 
-> Seeing the OEM unlocking toggle proves Developer options is already enabled (that screen only exists once it is).
+### Expect a 7-day lock
 
-### Expected: 7-day lock period
+Samsung enforces a **7-day wait** on new unlocks. In Download Mode you'll see `KG status: Checking` and flashing is refused until it expires. Check Settings → About phone for the timer.
 
-Samsung enforces a **7-day wait** on new unlocks. You will see `KG status: Checking` in Download Mode and flashing will be refused until the timer expires.
+**You can do all preparation while it counts down** — firmware download and Magisk patching don't require the unlock.
 
-You can do **all** the prep (firmware download, Magisk patching) while it counts down. Check Settings → About phone for the timer.
-
----
-
-## Step 3 — Back up everything
-
-`/data` is 109 GB with ~52 GB used. Verified contents of shared storage at time of writing:
-
-```
-Personal storage inventory removed
-```
-
-- Confirm Google Photos / Google Drive sync is **complete**
-- Copy anything irreplaceable off the device
-- Export 2FA seeds from your authenticator app (Knox-sensitive apps break)
-- Note: flashing `CSC` wipes the device. `HOME_CSC` preserves data. The AP-only route (Step 5) preserves data.
+> Seeing the OEM toggle confirms Developer options is already on — that screen only exists once enabled.
 
 ---
 
-## Step 4 — Obtain matching stock firmware
+## Step 3 — Back up
 
-You need firmware matching **all three**: model `SM-A057F`, your **CSC region** (`BD`), and your **exact current build** (from Step 1).
+Verified contents of your shared storage:
 
-**Option A — Frija (official Samsung FUS server):**
-1. Model: `SM-A057F`
-2. CSC: `BD`
-3. IMEI: dial `*#06#`
+```
+Personal file inventory removed
+```
+
+- Confirm Google Photos / Drive sync is **complete**, not in progress
+- Copy irreplaceables off the device
+- **Export 2FA seeds** — Knox-sensitive authenticator apps break after rooting
+- Save any banking app credentials you can't re-verify
+
+---
+
+## Step 4 — Get matching firmware
+
+You need all three to match: model `SM-A057F`, **CSC region `BD`**, and your **exact current build**.
+
+**Option A — Frija** (queries Samsung's official FUS server):
+
+1. Model `SM-A057F`
+2. CSC `BD`
+3. IMEI — dial `*#06#`
 4. Check Update → Download
 
-**Option B — SamFW:** `https://samfw.com/firmware/SM-A057F`
+**Option B — SamFW:** <https://samfw.com/firmware/SM-A057F>
 
-After unzipping you have 4–5 files:
+You get four or five files:
 
-| File | Purpose | Size |
-|---|---|---|
-| `BL_*.tar.md5` | Bootloader | small |
-| `AP_*.tar.md5` | **System / boot / init_boot / vbmeta** | **~7 GB** |
-| `CP_*.tar.md5` | Modem | medium |
-| `CSC_*.tar.md5` | Carrier config — **wipes data** | small |
-| `HOME_CSC_*.tar.md5` | Carrier config — **preserves data** | small |
+| File | Contents | Size | Needed? |
+|---|---|---|---|
+| `BL_*.tar.md5` | Bootloader | small | Only if unlocking bootloader separately |
+| `AP_*.tar.md5` | **system, init_boot, boot, vbmeta** | **~7 GB** | **Yes — this is the one you patch** |
+| `CP_*.tar.md5` | Modem/radio | medium | No |
+| `CSC_*.tar.md5` | Carrier config | small | Wipes device |
+| `HOME_CSC_*.tar.md5` | Carrier config | small | Preserves data |
 
-> ⚠️ **Region mismatch can be refused by the bootloader.** Never guess the CSC.
+> ⚠️ **Wrong CSC can be refused by the bootloader, or change carrier config.** Never guess.
 
 ---
 
 ## Step 5 — Patch with Magisk
 
-### ⚠️ Known bug you must avoid
+### ⚠️ The bug that wastes everyone's afternoon
 
-**Magisk 27.0 and newer produce a CORRUPT patched AP tar.** Odin hangs at "File Analysis", or errors `Unexpected end of archive`. The patched tar gets an AVB footer that puts Odin in a dead loop.
+**Magisk 27.0+ cannot patch a full Samsung `AP` tar.** The output gets an AVB footer and Odin either hangs at `File Analysis` or fails with `Unexpected end of archive`.
 
 Reference: [topjohnwu/Magisk#8735](https://github.com/topjohnwu/Magisk/issues/8735)
 
-**Therefore: do NOT patch the whole `AP` file.** Patch the individual boot images instead.
+**So patch the individual boot image, not the AP container.**
 
-### Procedure
+The A05s is **System-as-Root** — the target is **`init_boot.img`**, not `boot.img`.
 
-1. Open `AP_*.tar.md5` with 7-Zip (it is a plain tar; ignore the trailing MD5).
-2. Extract these three:
-   ```
-   boot.img.lz4
-   init_boot.img.lz4
-   vbmeta.img.lz4
-   ```
-   > The A05s is System-as-Root — **`init_boot.img` is the correct target**, not `boot.img`.
+Full procedure with commands: [docs/DETAILED-GUIDE.md §5](docs/DETAILED-GUIDE.md#5-patch-with-magisk)
 
-3. Decompress with LZ4:
-   ```bash
-   lz4 -d init_boot.img.lz4 init_boot.img
-   ```
+Two paths:
 
-4. Copy `init_boot.img` to the phone (via adb or directly).
+| Path | How | Trade-off |
+|---|---|---|
+| **A (recommended)** | Extract `init_boot.img` from AP → patch with current Magisk → repack for Odin | Works with any Magisk version. More steps. |
+| **B (legacy)** | Use Magisk **26.4** to patch the whole AP directly | Fewer steps, but requires deliberately downgrading Magisk. |
 
-5. On the phone, Magisk → **Install → Select and Patch a File** → pick `init_boot.img`.
-   Output: `magisk_patched-<timestamp>.img` in the same folder.
+### 🔑 The LZ4 content-size gotcha
 
-6. Pull it back to the PC and repack for Odin.
-
-### 🔑 The LZ4 gotcha
-
-If you recompress, LZ4 **must** be built with `--content-size`:
+If you recompress the image, LZ4 **must** carry the content-size flag, or Odin fails with `FAIL! LZ4 is invalid`.
 
 ```bash
 lz4 -B6 --content-size init_boot.img init_boot.img.lz4
 ```
 
-Verify the magic bytes — they **must start `04 22 4d 18 6c`**:
+Verify — the magic **must start `04 22 4d 18 6c`**:
 
 ```bash
-xxd -l 8 init_boot.img.lz4
-# 04224d18 6c ...   ← the 6c is the --content-size flag
+xxd -l 8 -p init_boot.img.lz4
+# 04224d186c...   <- 6c = content-size present  ✅
+# 04224d1864...   <- 64 = content-size MISSING  ❌
 ```
 
-Plain `lz4` omits it and Odin fails with `FAIL! LZ4 is invalid`.
-
-Then tar it:
-```bash
-tar -cf magisk_patched.tar init_boot.img.lz4
-```
+*(Verified empirically on this device with `lz4` 1.10.0 — see [docs/TOOLS.md](docs/TOOLS.md).)*
 
 ---
 
 ## Step 6 — Flash with Odin
 
-1. Power off the phone.
-2. **Download Mode:** hold **Volume Up + Volume Down**, connect USB, then press **Volume Up** to continue past the warning.
-3. Open **Odin as Administrator**. `ID:COM` box turns **blue** (grey = install Samsung USB drivers).
-4. Load files:
-
-   | Odin slot | File | Notes |
-   |---|---|---|
-   | **AP** | your `magisk_patched.tar` | the patched image |
-   | **BL** | *empty* | unless unlocking bootloader separately |
-   | **CP** | *empty* | |
-   | **CSC** | *empty* **or** `HOME_CSC` | empty + AP-only = **no wipe** |
-
-5. **Options tab:** uncheck **Auto Reboot**. Leave `F. Reset Time` ticked.
-   **Never tick `Re-Partition` or `Nand Erase`.**
-6. **Start** → wait for green **`PASS!`**. Do not unplug. The AP write looks frozen for minutes; that is normal.
+1. Power off
+2. **Download Mode:** hold **Vol Up + Vol Down**, connect USB, press **Vol Up** to continue
+3. Odin as **Administrator**; `ID:COM` turns **blue** (grey = install Samsung USB drivers)
+4. Load slots per the table in [docs/DETAILED-GUIDE.md §6](docs/DETAILED-GUIDE.md#6-flash-with-odin)
+5. **Uncheck Auto Reboot** — critical, see Step 7
+6. Start → wait for green **`PASS!`**. The AP write looks frozen for minutes. **Do not unplug.**
 
 ---
 
-## Step 7 — Boot manually into the patched image
+## Step 7 — Boot into the patched image manually
 
-⚠️ **Do not let Odin auto-reboot — you set Auto Reboot OFF for this reason.**
+⚠️ **A normal power-button press boots the STOCK image and Magisk will not load.** You must force it.
 
-1. Press **Volume Down + Power** until the screen turns off.
-2. Immediately hold **Volume Up + Power** until the Samsung logo.
-   (Vol Up forces boot into the patched image; a normal power press boots the stock image and Magisk will not load.)
-3. First boot after a flash takes several minutes.
-4. Open Magisk → it should show **Installed** and offer a reboot to finalise.
-5. Verify: `adb shell su` → should grant a root shell.
-
----
-
-## Troubleshooting
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| Odin stuck at "File Analysis" | Magisk 27+ corrupted AP patch | Patch `init_boot.img` individually (Step 5) |
-| `Unexpected end of archive` | same as above | same as above |
-| `FAIL! LZ4 is invalid` | `.lz4` missing content-size header | Recompress with `lz4 -B6 --content-size`; magic must start `04 22 4d 18 6c` |
-| Boots to **ODIN MODE (AVB Fail) / CUSTOM VBMETA** | AVB rejecting modified image | Flash **stock `vbmeta.img` + `vbmeta_samsung.img` from the exact same firmware** |
-| AVB still failing after patching vbmeta | Setting flags to `03` is insufficient on newer MTK | Use the **stock** vbmeta from the identical build, not a hand-patched one |
-| `KG status: Checking` | Samsung 7-day unlock wait | Wait out the timer |
-| No OEM-unlock toggle | Carrier-locked variant | Not rootable |
-| Odin `ID:COM` stays grey | Missing USB driver | Install Samsung USB drivers |
-| Magisk patched but no root | Booted stock image instead of patched | Reboot holding **Vol Up + Power** |
-| Device bootloops | Wrong image / wrong firmware build | Reflash stock firmware via Odin; never improvise |
+1. **Vol Down + Power** until the screen goes dark
+2. Immediately **Vol Up + Power** until the Samsung logo (Vol Up = boot patched image)
+3. First boot after a flash takes several minutes
+4. Open Magisk → should show **Installed**
+5. Verify: `adb shell su`
 
 ---
 
-## Unroot / restore
-
-- Magisk → **Uninstall** (restores stock boot image)
-- Or reflash the original stock firmware via Odin
-- **Knox stays tripped. It never resets.**
-
----
-
-## After rooting — verification
+## Step 8 — Verify
 
 ```bash
-adb shell su                      # expect a root shell
-adb shell magisk -V              # expect a version number
-adb shell getprop ro.build.version.release
+adb shell su                  # expect a root shell
+adb shell magisk -V          # expect a version number
+adb shell getprop ro.build.version.release   # 15
 ```
 
-Root enables the forensics that were previously impossible on this device:
+Also open the **Magisk app** — it must read `Installed`, not `Not Installed`.
+
+---
+
+## What rooting unlocks
+
+The forensics that were impossible on this device before:
 
 ```bash
-# live socket table — was SELinux-blocked without root
-cat /proc/net/tcp
-cat /proc/net/tcp6
-
-# installed packages
-pm list packages -3
-
-# per-process file + socket handles
-lsof -nP -i
-
-# traffic counters
-cat /proc/net/dev
-
-# routing + neighbour tables
-ip route; ip neigh
+cat /proc/net/tcp          # live socket table  (was SELinux-blocked)
+cat /proc/net/dev          # per-interface traffic counters
+pm list packages -3        # installed third-party apps
+lsof -nP -i                # per-process sockets
+ip route; ip neigh         # routing + neighbour tables
 ```
 
 ---
 
 ## Sources
 
-- [Magisk official releases](https://github.com/topjohnwu/Magisk/releases)
-- [Magisk issue #8735 — patching Samsung AP corruption](https://github.com/topjohnwu/Magisk/issues/8735)
-- [SamFW firmware archive](https://samfw.com/firmware/SM-A057F)
-- [SamMobile firmware archive](https://www.sammobile.com/samsung/galaxy-a05s/)
+- [Magisk releases](https://github.com/topjohnwu/Magisk/releases) — official only
+- [Magisk#8735 — AP patch corruption](https://github.com/topjohnwu/Magisk/issues/8735)
+- [SamFW](https://samfw.com/firmware/SM-A057F) · [SamMobile](https://www.sammobile.com/samsung/galaxy-a05s/)
 - [XDA — A05s root thread](https://xdaforums.com/t/request-root-method-for-galaxy-a05s-sm-a057f-ds-one-ui-7-android-15.4755956/)
 - [XDA — Magisk on newer Samsung firmware](https://xdaforums.com/t/magisk-samsung-a05s.4763159/)
-- [sanjarbiy/samsung-a05s-pixelos-gsi](https://github.com/sanjarbiy/samsung-a05s-pixelos-gsi) — documents that TWRP and fastboot do not work; Odin-only
+- [sanjarbiy/samsung-a05s-pixelos-gsi](https://github.com/sanjarbiy/samsung-a05s-pixelos-gsi) — confirms **no TWRP, no fastboot**; Odin-only
