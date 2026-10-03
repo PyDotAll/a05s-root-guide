@@ -9,6 +9,7 @@
 
 | If you want… | Read |
 |---|---|
+| **Your exact device specs first** | **[docs/DEVICE-SPECIFICATIONS.md](docs/DEVICE-SPECIFICATIONS.md)** |
 | The whole thing, start to finish | This file, top to bottom |
 | Just the steps, with expected output at each | [docs/DETAILED-GUIDE.md](docs/DETAILED-GUIDE.md) |
 | A printable tick-list | [CHECKLIST.md](CHECKLIST.md) |
@@ -29,14 +30,14 @@ You asked me to guarantee this works. I can't, and anyone who says otherwise is 
 
 **What is verified about your specific device:**
 - Model is `SM-A057F/DS`, international variant — has a working OEM-unlock toggle
-- Android 15 / One UI 7, build `<YOUR_BUILD_FINGERPRINT>`
+- Android 15 / One UI 7, firmware `<YOUR_FIRMWARE_BUILD>`, patch **<YOUR_PATCH_DATE>**
 - Odin + patched `init_boot.img` is the documented working path
 - Root is achievable on this model *(community reports)*
 
 **What cannot be verified without a PC, a reboot, and risking the device:**
 - Whether your bootloader unlocks cleanly on the first attempt
 - Whether Samsung's 7-day KG timer is already satisfied
-- Whether firmware for your exact build + CSC `BD` is downloadable
+- Whether firmware for `<YOUR_FIRMWARE_BUILD>` + your carrier CSC is downloadable
 - Whether AVB will accept the patched image on your firmware revision
 
 Realistically this is a **high-confidence** procedure with normal failure modes, not a certainty. The failure modes are all recoverable — see [docs/RECOVERY.md](docs/RECOVERY.md) — but the process can cost you an afternoon and a factory reset.
@@ -70,9 +71,11 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 | Model | **Samsung Galaxy A05s SM-A057F/DS** |
 | Variant | International — the unlockable one |
 | Chipset | MediaTek Helio G80 (MT6765), octa-core, aarch64 |
-| Firmware | `<YOUR_BUILD_FINGERPRINT>` |
+| **Kernel** | **`<YOUR_KERNEL_VERSION>`** |
+| **Firmware** | **`<YOUR_FIRMWARE_BUILD>`** |
 | OS | Android 15 / One UI 7 (first shipped Android 13) |
-| Security patch | **<EARLIER_PATCH_DATE>** ⚠️ ~21 months stale |
+| **Security patch** | **<YOUR_PATCH_DATE>** (SMR Nov-2025 R1, ASKS v9.4 20260111) |
+| Service provider | `<YOUR_CSC>` — **carrier-branded** |
 | SELinux | Enforcing |
 | Storage | <DEVICE_STORAGE_REDACTED> |
 | Root / bootloader | None currently |
@@ -80,32 +83,50 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 Fingerprint decode:
 
 ```
-AP3A                        -> Android 15 platform
-240905                      -> security patch <EARLIER_PATCH_DATE>
-A2A057F                     -> model A057F
-SBDYJ1                      -> region BD (Bangladesh)
-SEPF_SM-A057F_13_0001       -> SM-A057F, first shipped Android 13
+<YOUR_BUILD_FINGERPRINT>
+     ^^^^^^ AOSP AP branch date — NOT your patch level (see below)
+AP3A      -> Android 15 platform
+A2A057F   -> model A057F
+SBDYJ1    -> firmware revision, matches Settings
+SEPF_SM-A057F_13_0001 -> first shipped Android 13
 ```
 
-> Note: `/sys/devices/soc0/family` reports "Snapdragon" on this device — that string is inherited from reused kernel code and is **wrong**. It is a MediaTek part.
+> **⚠️ The fingerprint's `240905` is *not* your patch date.** Samsung ships the Google/AP
+> patch and the Samsung Monthly Release on independent cadences, so they legitimately disagree.
+> Your real patch level is **<YOUR_PATCH_DATE>**, from Settings — about **11 months** old.
+> I initially misread this as <EARLIER_PATCH_DATE> / 21 months stale. That was wrong; see
+> [DEVICE-SPECIFICATIONS.md](docs/DEVICE-SPECIFICATIONS.md#️-correction--i-had-the-patch-date-wrong).
+
+> Note: `/sys/devices/soc0/family` reports "Snapdragon" on this device — that string is
+> inherited from reused kernel code and is **wrong**. It is a MediaTek part.
+
+### What the kernel tells us
+
+`5.15.167-android13-8` means:
+
+- **System-as-Root** → **`init_boot.img` is the correct patch target**, not `boot.img` ✓
+- **5.15 LTS** → squarely within Magisk's supported range; no exotic kernel to work around
+- **No GKI/generic-kernel complications** — Samsung ships its own kernel builds
+- Kernel is the **Android 13 branch while the OS is Android 15** — normal Samsung behaviour,
+  *not* a sign of a tampered build
 
 ---
 
-## Step 1 — Update via OTA first ⚠️
+## Step 1 — Update via OTA (worthwhile, not urgent) ⚠️
 
-Your patch level is **<EARLIER_PATCH_DATE>**. Samsung has shipped **2026-05-05** firmware for this model. You are ~21 months behind on a device still receiving updates.
+Your patch level is **<YOUR_PATCH_DATE>** — about 11 months behind. Real exposure, but modest, and
+Samsung's monthly channel is still reaching this device.
 
 **Do this before rooting:**
 
 > Settings → Software update → Download and install
 
-Three reasons the order matters:
+Two reasons:
 
-1. **After rooting, OTA is dead.** This is your last one-tap update, ever.
-2. **You want to patch a current `init_boot`**, not a 2024 one.
-3. A stale patch on a current OS is worth ruling out regardless of rooting.
+1. **After rooting, OTA is disabled.** This is your last one-tap update, ever.
+2. **You want to patch a current `init_boot`**, not a stale one.
 
-**Record the new build number** — Step 3 requires firmware matching it exactly.
+⚠️ **Record the new build number AND patch date** — Step 4 requires firmware matching both.
 
 ---
 
@@ -149,12 +170,24 @@ Personal file inventory removed
 
 ## Step 4 — Get matching firmware
 
-You need all three to match: model `SM-A057F`, **CSC region `BD`**, and your **exact current build**.
+You need model, **CSC**, and build to all match.
+
+| Field | Value |
+|---|---|
+| Model | **`SM-A057F`** |
+| Firmware / PDA | **`<YOUR_FIRMWARE_BUILD>`** |
+| Patch level | **<YOUR_PATCH_DATE>** |
+| Service provider | `<YOUR_CSC>` |
+
+⚠️ **Your build is carrier-branded** (`SAOMC`). Flashing a different CSC can alter VoLTE,
+carrier settings, network bands, and mobile-data provisioning. **Confirm your CSC in
+Settings → About phone → Software information** — do not take my inference from the
+fingerprint region field on trust.
 
 **Option A — Frija** (queries Samsung's official FUS server):
 
 1. Model `SM-A057F`
-2. CSC `BD`
+2. CSC — read it from Settings
 3. IMEI — dial `*#06#`
 4. Check Update → Download
 

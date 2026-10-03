@@ -30,6 +30,7 @@
 
 - [ ] Settings → Software update → downloaded and installed
 - [ ] New **build number** recorded: `________________`
+- [ ] New **patch level** recorded: `________________`
 
 > Do this BEFORE rooting. OTA dies once you root.
 
@@ -52,7 +53,9 @@ At risk: **52 GB** total · Personal storage inventory removed
 ## 5. Firmware
 
 - [ ] Model = `SM-A057F`
-- [ ] CSC = `BD`
+- [ ] Firmware = `<YOUR_FIRMWARE_BUILD>` (or newer)
+- [ ] Patch = `<YOUR_PATCH_DATE>` (or newer)
+- [ ] **CSC confirmed in Settings** — carrier-branded build `<YOUR_CSC>`
 - [ ] Build matches step 2
 - [ ] Downloaded (~7 GB — use WiFi, not cellular)
 - [ ] Extracted: `BL`, `AP`, `CP`, `CSC`, `HOME_CSC`

@@ -127,7 +127,7 @@ their policy.
 **Only** if you flash firmware for the wrong model or region, or interrupt a write mid-flash.
 Both are avoidable:
 
-- Confirm `SM-A057F` and CSC `BD` every time
+- Confirm `SM-A057F`, `<YOUR_FIRMWARE_BUILD>`, and your carrier CSC every time
 - Don't unplug during `super.img` write (it looks frozen; it isn't)
 - Keep stock firmware on the PC
 
@@ -142,8 +142,9 @@ Legacy alternative: Magisk 26.4 can patch the whole AP directly.
 
 ### What if firmware for my exact build isn't available?
 
-Download the **closest available** build for `SM-A057F` / CSC `BD`. Newer patch levels are
-fine — **never older**, and never a different region.
+Download the **closest available** build for `SM-A057F` / your CSC. Newer patch levels are
+fine — **never older**, and never a different region or carrier. Your build is carrier-branded,
+so a CSC mismatch can break VoLTE and mobile data, not just locale.
 
 ### Do I need `vbmeta` in the tar?
 

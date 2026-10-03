@@ -20,11 +20,11 @@ Magisk app must show **Installed**. If it doesn't, see
 
 **OTA is gone.** Root disabled it. From now on the only update path is manual:
 
-1. Download new stock firmware (SamFW / Frija)
+1. Download new stock firmware for `SM-A057F` / your CSC (SamFW / Frija)
 2. Flash full stock via Odin (`BL`, `AP`, `CP`, `CSC`)
 3. Re-patch and re-root
 
-Put this in your calendar — check monthly. Your current patch is already **<EARLIER_PATCH_DATE>**;
+Put this in your calendar — check monthly. Your current patch is **<YOUR_PATCH_DATE>**;
 don't let it drift further.
 
 ---

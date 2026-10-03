@@ -58,7 +58,7 @@ Why first, not last:
 
 - OTA is permanently disabled once rooted
 - You want to patch a *current* `init_boot`, not a 2024 one
-- ~21 months of missing patches is worth closing regardless
+- ~11 months of missing patches is worth closing regardless
 
 ---
 
@@ -116,10 +116,10 @@ AP-only is enough to root. Start there — it costs nothing and preserves everyt
 | Field | Value |
 |---|---|
 | Model | `SM-A057F` |
-| CSC | `BD` |
+| CSC | read from Settings → About phone → Software information (your build is **carrier-branded**: `<YOUR_CSC>`) |
 | IMEI | dial `*#06#` on the phone |
 
-Check Update → Download. Get the build matching Step 2's build number.
+Check Update → Download. Target firmware **`<YOUR_FIRMWARE_BUILD>`**, patch level **<YOUR_PATCH_DATE>**.
 
 **Alternative:** <https://samfw.com/firmware/SM-A057F>
 
