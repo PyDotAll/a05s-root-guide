@@ -15,6 +15,8 @@
 - [ ] Data-capable USB cable (test it!)
 - [ ] ~25 GB free on PC
 - [ ] Second USB cable as backup
+- [ ] Serial + IMEI written down **off the phone** (password manager / paper)
+      *Needed for firmware lookup. Not stored in this repo — see DEVICE-SPECIFICATIONS.md.*
 
 ---
 

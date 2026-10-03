@@ -117,7 +117,11 @@ AP-only is enough to root. Start there — it costs nothing and preserves everyt
 |---|---|
 | Model | `SM-A057F` |
 | CSC | read from Settings → About phone → Software information (your build is **carrier-branded**: `<YOUR_CSC>`) |
-| IMEI | dial `*#06#` on the phone |
+| Serial **or** IMEI | Serial from Software information, or dial `*#06#` for IMEI |
+
+> **Neither the serial nor the IMEI belongs in a repo, a screenshot, or a support chat.**
+> Share them only with the tool that needs them, over a trusted connection. See
+> [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#serial-number--deliberately-not-stored-here).
 
 Check Update → Download. Target firmware **`<YOUR_FIRMWARE_BUILD>`**, patch level **<YOUR_PATCH_DATE>**.
 
