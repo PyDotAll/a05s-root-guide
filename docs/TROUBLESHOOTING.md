@@ -48,14 +48,33 @@ xxd -l 8 -p init_boot.img.lz4    # must start 04224d186c
 
 ---
 
+> **Interface note.** Steps here describe the **Odin GUI** because it's the most widely
+> documented. If you're using the open-source route
+> ([WINDOWS-11-TOOLS.md](WINDOWS-11-TOOLS.md)), the equivalents are:
+>
+> | Odin GUI | odin4 / samloader-rs |
+> |---|---|
+> | Load AP slot | `odin4 -a magisk_patched.tar` |
+> | Uncheck Auto Reboot | omit `--reboot` |
+> | "File Analysis" stage | `--check-only` dry run |
+> | PASS! | process exit code 0 |
+
+---
+
 ## During flashing
 
-### Odin `ID:COM` stays grey
+### Odin `ID:COM` stays grey / device not detected
 
 **Cause:** missing/wrong USB driver, or a charge-only cable.
-**Fix:** install Samsung USB drivers; try a different cable and a direct USB port (not a hub).
+**Open-source fix:** install **WinUSB** via [Zadig](https://zadig.akeo.ie) (GPL-2.0) for the
+Samsung Download Mode device, instead of Samsung's proprietary driver.
+**Fix:** try a different cable and a direct USB port (not a hub). Verify with
+`odin4 -l` or `adb devices`.
 
-### Odin stuck at `File Analysis`
+> Caveat: WinUSB replaces Samsung's driver, so Samsung Smart Switch will stop working until you
+> switch back in Device Manager.
+
+### Odin stuck at `File Analysis` / odin4 rejects the archive
 
 **Cause:** corrupt patched tar — almost always the Magisk 27+ AP bug.
 **Fix:** repatch `init_boot.img` individually.

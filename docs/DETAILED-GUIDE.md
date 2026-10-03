@@ -111,11 +111,22 @@ AP-only is enough to root. Start there — it costs nothing and preserves everyt
 
 ### 5.1 Retrieve
 
-**Frija** → Manual tab:
+**samloader-rs** (Apache 2.0 — open source):
+
+```bash
+# what firmware is available for your model + region
+samloader list --model SM-A057F --region <CSC>
+
+# download + decrypt the build you need
+samloader download --model SM-A057F --region <CSC> \
+  --firmware <YOUR_FIRMWARE_BUILD> --imei <SERIAL>
+```
 
 | Field | Value |
 |---|---|
 | Model | `SM-A057F` |
+| Firmware | `<YOUR_FIRMWARE_BUILD>` (or newer) |
+| Patch level | `<YOUR_PATCH_DATE>` (or newer) |
 | CSC | read from Settings → About phone → Software information (your build is **carrier-branded**: `<YOUR_CSC>`) |
 | Serial **or** IMEI | Serial from Software information, or dial `*#06#` for IMEI |
 
@@ -123,9 +134,11 @@ AP-only is enough to root. Start there — it costs nothing and preserves everyt
 > Share them only with the tool that needs them, over a trusted connection. See
 > [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#serial-number--deliberately-not-stored-here).
 
-Check Update → Download. Target firmware **`<YOUR_FIRMWARE_BUILD>`**, patch level **<YOUR_PATCH_DATE>**.
+Target firmware **`<YOUR_FIRMWARE_BUILD>`**, patch level **<YOUR_PATCH_DATE>**.
 
-**Alternative:** <https://samfw.com/firmware/SM-A057F>
+**Alternatives:** [Bifrost](https://github.com/zacharee/Bifrost) (MIT, GUI) ·
+[samloader](https://github.com/nlscc/samloader) (GPL) ·
+<https://samfw.com/firmware/SM-A057F> (mirror, not auditable)
 
 ### 5.2 Extract
 

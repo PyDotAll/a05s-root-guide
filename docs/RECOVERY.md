@@ -17,6 +17,15 @@ Everything here assumes you have **stock firmware for your exact build** on a PC
 
 ---
 
+> **Interface note.** Recovery paths below describe the **Odin GUI**. With the open-source
+> route, substitute `odin4 -b BL_x.tar.md5 -a AP_x.tar.md5 -c CP_x.tar.md5 -s CSC_x.tar.md5`
+> — see [WINDOWS-11-TOOLS.md](WINDOWS-11-TOOLS.md). Always run `--check-only` first.
+>
+> **Whatever tool you use, keep stock firmware on the PC permanently.** Every recovery path
+> depends on it.
+
+---
+
 ## 🟢 Soft — boots, no root
 
 Nothing is broken. Reflash the patched image:
@@ -70,7 +79,7 @@ suspect the firmware itself, or hardware.
 
 ---
 
-## ⚫ Odin doesn't detect the device
+## ⚫ Odin / odin4 doesn't detect the device
 
 ### DFU mode
 
@@ -92,8 +101,9 @@ That's DFU. Odin can flash from here.
 - Different USB **cable** (data-capable — the #1 cause)
 - Different USB **port** (directly on the PC, no hub)
 - Different **PC**
-- Reinstall Samsung USB drivers
+- Reinstall USB drivers — **Zadig** (GPL-2.0) for WinUSB, or Samsung's for Odin
 - On another PC: install the **Android Bootloader Interface** driver
+- Confirm the tool sees it: `odin4 -l` (Download Mode) or `adb devices`
 
 ---
 

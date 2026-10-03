@@ -18,6 +18,7 @@
 | Already rooted — now what | [docs/POST-ROOT.md](docs/POST-ROOT.md) |
 | Change my mind / undo it | [docs/UNROOT.md](docs/UNROOT.md) |
 | Security state of this phone | [docs/security-findings.md](docs/security-findings.md) |
+| **Windows 11 tools (all open-source/free)** | **[docs/WINDOWS-11-TOOLS.md](docs/WINDOWS-11-TOOLS.md)** |
 | Tools I set up on the phone | [docs/TOOLS.md](docs/TOOLS.md) |
 
 ---
@@ -53,7 +54,9 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 
 ### Hard requirements
 
-- [x] **Windows PC** — Odin has no Linux/macOS equivalent. This is not optional.
+- [x] **Windows PC** — or WSL2, or a Linux/macOS machine
+      (Odin3 itself is proprietary leaked software; see [docs/WINDOWS-11-TOOLS.md](docs/WINDOWS-11-TOOLS.md) for the
+      fully open-source toolchain)
 - [x] **Data-capable USB cable** — not a charge-only cable
 - [ ] ~25 GB free on the PC (the `AP` firmware is ~7 GB, plus extracted images)
 - [ ] Phone charged above 60%
@@ -74,7 +77,10 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 | **Kernel** | **`<YOUR_KERNEL_VERSION>`** |
 | **Firmware** | **`<YOUR_FIRMWARE_BUILD>`** |
 | OS | Android 15 / One UI 7 (first shipped Android 13) |
+| **One UI** | **7.0** |
+| **Baseband** | `<YOUR_FIRMWARE_BUILD>` |
 | **Security patch** | **<YOUR_PATCH_DATE>** (SMR Nov-2025 R1, ASKS v9.4 20260111) |
+| **Google Play System** | **<YOUR_PLAY_SYSTEM_DATE>** ← only ~2 months old |
 | Service provider | `<YOUR_CSC>` — **carrier-branded** |
 | SELinux | Enforcing |
 | Storage | <DEVICE_STORAGE_REDACTED> |

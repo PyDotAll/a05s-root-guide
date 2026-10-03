@@ -4,6 +4,26 @@
 
 ---
 
+## Tools — all open-source & free
+
+Full audit: [docs/WINDOWS-11-TOOLS.md](docs/WINDOWS-11-TOOLS.md)
+
+| Tool | License | For |
+|---|---|---|
+| samloader-rs | Apache 2.0 | firmware download + flash |
+| odin4 | Open source | Thor-protocol flash |
+| Zadig | GPL-2.0 | WinUSB driver |
+| Magisk | Apache 2.0 | root |
+| platform-tools | Apache 2.0 | adb |
+| 7-Zip | LGPL | open `.tar.md5` |
+| lz4 | BSD-2 | LZ4 recompress |
+| Git | GPL-2.0 | build from source |
+
+⚠️ **Classic Odin3 is proprietary leaked software** — not open-source, from mirrors of unknown
+trustworthiness. Open-source flashing tools are less battle-tested; accept that trade-off.
+
+---
+
 ## ⛔ Gate — check before starting anything
 
 - [ ] **Knox warranty void reads `0x0`** (Settings → About phone)

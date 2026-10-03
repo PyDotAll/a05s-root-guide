@@ -4,6 +4,11 @@ Two levels: remove root, or restore stock.
 
 ---
 
+> **Tooling:** the slot layout is identical for the open-source route
+> (`odin4 -b … -a … -c … -s …`). See [WINDOWS-11-TOOLS.md](WINDOWS-11-TOOLS.md).
+
+---
+
 ## Level 1 — Remove root, keep data
 
 Magisk → **Uninstall** → **Complete uninstall (recommended)**
