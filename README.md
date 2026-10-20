@@ -1,7 +1,7 @@
 # Rooting Samsung Galaxy A05s (SM-A057F) — Complete Guide
 
-> Written <CAPTURE_DATE> from a live inspection of this exact device.
-> Every fact below was verified unless marked *(community report)*.
+> Firmware and device state vary by region and release. Verify your own device before following
+> any flashing instructions.
 
 ---
 
@@ -9,7 +9,7 @@
 
 | If you want… | Read |
 |---|---|
-| **Your exact device specs first** | **[docs/DEVICE-SPECIFICATIONS.md](docs/DEVICE-SPECIFICATIONS.md)** |
+| Device identifiers and privacy | [docs/DEVICE-SPECIFICATIONS.md](docs/DEVICE-SPECIFICATIONS.md) |
 | The whole thing, start to finish | This file, top to bottom |
 | Just the steps, with expected output at each | [docs/DETAILED-GUIDE.md](docs/DETAILED-GUIDE.md) |
 | A printable tick-list | [CHECKLIST.md](CHECKLIST.md) |
@@ -17,31 +17,27 @@
 | It's bricked / won't boot | [docs/RECOVERY.md](docs/RECOVERY.md) |
 | Already rooted — now what | [docs/POST-ROOT.md](docs/POST-ROOT.md) |
 | Change my mind / undo it | [docs/UNROOT.md](docs/UNROOT.md) |
-| Security state of this phone | [docs/security-findings.md](docs/security-findings.md) |
 | **Windows 11 tools (all open-source/free)** | **[docs/WINDOWS-11-TOOLS.md](docs/WINDOWS-11-TOOLS.md)** |
-| Tools I set up on the phone | [docs/TOOLS.md](docs/TOOLS.md) |
+| Tool verification notes | [docs/TOOLS.md](docs/TOOLS.md) |
 
 ---
 
 ## ⚠️ Read this before anything else
 
-### I cannot promise 100%
+### No rooting guide can promise 100%
 
-You asked me to guarantee this works. I can't, and anyone who says otherwise is selling something. Here's the honest position:
+No guide can guarantee this works on every firmware or carrier variant. The procedure can fail
+and may require a factory reset.
 
-**What is verified about your specific device:**
-- Model is `SM-A057F/DS`, international variant — has a working OEM-unlock toggle
-- Android 15 / One UI 7, firmware `<YOUR_FIRMWARE_BUILD>`, patch **<YOUR_PATCH_DATE>**
-- Odin + patched `init_boot.img` is the documented working path
-- Root is achievable on this model *(community reports)*
+**Model-level information:**
+- This guide targets the international Galaxy A05s (`SM-A057F`); variants differ
+- Odin + a patched boot image is the documented approach
+- Rooting reports are community-sourced; verify current compatibility before proceeding
 
-**What cannot be verified without a PC, a reboot, and risking the device:**
-- Whether your bootloader unlocks cleanly on the first attempt
-- Whether Samsung's 7-day KG timer is already satisfied
-- Whether firmware for `<YOUR_FIRMWARE_BUILD>` + your carrier CSC is downloadable
-- Whether AVB will accept the patched image on your firmware revision
+Check bootloader status, firmware availability, and image compatibility on your own device
+before flashing.
 
-Realistically this is a **high-confidence** procedure with normal failure modes, not a certainty. The failure modes are all recoverable — see [docs/RECOVERY.md](docs/RECOVERY.md) — but the process can cost you an afternoon and a factory reset.
+See [docs/RECOVERY.md](docs/RECOVERY.md) for recovery options.
 
 ### Irreversible consequences
 
@@ -50,7 +46,7 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 | **Knox trips — permanently** | Never resets, even by reflashing stock. Samsung Pay, Secure Folder, and most banking/DRM apps stop working forever. |
 | **OTA updates disabled** | You will only be able to update by manually reflashin via Odin. |
 | **Warranty** | Samsung will deny service for an unlocked bootloader. |
-| **Data** | 52 GB of your data is at risk. Flash `CSC` to wipe; `HOME_CSC` or AP-only preserves. |
+| **Data** | Back up anything important first. Flashing with `CSC` wipes user data; `HOME_CSC` or AP-only may preserve it. |
 
 ### Hard requirements
 
@@ -67,61 +63,25 @@ Realistically this is a **high-confidence** procedure with normal failure modes,
 
 ---
 
-## Device facts (verified on your phone)
+## Model overview
 
 | Property | Value |
 |---|---|
 | Model | **Samsung Galaxy A05s SM-A057F/DS** |
-| Variant | International — the unlockable one |
+| Variant | International model; confirm the exact variant before flashing |
 | Chipset | MediaTek Helio G80 (MT6765), octa-core, aarch64 |
-| **Kernel** | **`<YOUR_KERNEL_VERSION>`** |
-| **Firmware** | **`<YOUR_FIRMWARE_BUILD>`** |
-| OS | Android 15 / One UI 7 (first shipped Android 13) |
-| **One UI** | **7.0** |
-| **Baseband** | `<YOUR_FIRMWARE_BUILD>` |
-| **Security patch** | **<YOUR_PATCH_DATE>** (SMR Nov-2025 R1, ASKS v9.4 20260111) |
-| **Google Play System** | **<YOUR_PLAY_SYSTEM_DATE>** ← only ~2 months old |
-| Service provider | `<YOUR_CSC>` — **carrier-branded** |
-| SELinux | Enforcing |
-| Storage | <DEVICE_STORAGE_REDACTED> |
-| Root / bootloader | None currently |
-
-Fingerprint decode:
-
-```
-<YOUR_BUILD_FINGERPRINT>
-     ^^^^^^ AOSP AP branch date — NOT your patch level (see below)
-AP3A      -> Android 15 platform
-A2A057F   -> model A057F
-SBDYJ1    -> firmware revision, matches Settings
-SEPF_SM-A057F_13_0001 -> first shipped Android 13
-```
-
-> **⚠️ The fingerprint's `240905` is *not* your patch date.** Samsung ships the Google/AP
-> patch and the Samsung Monthly Release on independent cadences, so they legitimately disagree.
-> Your real patch level is **<YOUR_PATCH_DATE>**, from Settings — about **11 months** old.
-> I initially misread this as <EARLIER_PATCH_DATE> / 21 months stale. That was wrong; see
-> [DEVICE-SPECIFICATIONS.md](docs/DEVICE-SPECIFICATIONS.md#️-correction--i-had-the-patch-date-wrong).
-
-> Note: `/sys/devices/soc0/family` reports "Snapdragon" on this device — that string is
-> inherited from reused kernel code and is **wrong**. It is a MediaTek part.
+| OS / firmware | Varies; check Settings → About phone |
+| Bootloader | Unlockability depends on variant, region, and carrier |
 
 ### What the kernel tells us
 
-`5.15.167-android13-8` means:
-
-- **System-as-Root** → **`init_boot.img` is the correct patch target**, not `boot.img` ✓
-- **5.15 LTS** → squarely within Magisk's supported range; no exotic kernel to work around
-- **No GKI/generic-kernel complications** — Samsung ships its own kernel builds
-- Kernel is the **Android 13 branch while the OS is Android 15** — normal Samsung behaviour,
-  *not* a sign of a tampered build
+The kernel branch and firmware determine whether `init_boot.img` or `boot.img` is the correct
+patch target. Check the image files in your own firmware archive; do not assume they match
+another device's build.
 
 ---
 
 ## Step 1 — Update via OTA (worthwhile, not urgent) ⚠️
-
-Your patch level is **<YOUR_PATCH_DATE>** — about 11 months behind. Real exposure, but modest, and
-Samsung's monthly channel is still reaching this device.
 
 **Do this before rooting:**
 
@@ -161,12 +121,6 @@ Samsung enforces a **7-day wait** on new unlocks. In Download Mode you'll see `K
 
 ## Step 3 — Back up
 
-Verified contents of your shared storage:
-
-```
-Personal file inventory removed
-```
-
 - Confirm Google Photos / Drive sync is **complete**, not in progress
 - Copy irreplaceables off the device
 - **Export 2FA seeds** — Knox-sensitive authenticator apps break after rooting
@@ -180,21 +134,19 @@ You need model, **CSC**, and build to all match.
 
 | Field | Value |
 |---|---|
-| Model | **`SM-A057F`** |
-| Firmware / PDA | **`<YOUR_FIRMWARE_BUILD>`** |
-| Patch level | **<YOUR_PATCH_DATE>** |
-| Service provider | `<YOUR_CSC>` |
+| Model | Confirm the model shown in Settings |
+| Firmware / PDA | Record the current build locally |
+| Patch level | Check the Android security patch locally |
+| CSC | Confirm the region/carrier code in Settings |
 
-⚠️ **Your build is carrier-branded** (`SAOMC`). Flashing a different CSC can alter VoLTE,
-carrier settings, network bands, and mobile-data provisioning. **Confirm your CSC in
-Settings → About phone → Software information** — do not take my inference from the
-fingerprint region field on trust.
+⚠️ A mismatched CSC can change carrier settings, network bands, and mobile-data provisioning.
+Confirm the CSC in Settings → About phone → Software information.
 
 **Option A — Frija** (queries Samsung's official FUS server):
 
 1. Model `SM-A057F`
 2. CSC — read it from Settings
-3. IMEI — dial `*#06#`
+3. Enter any required device identifier only in the trusted firmware tool; never save it here.
 4. Check Update → Download
 
 **Option B — SamFW:** <https://samfw.com/firmware/SM-A057F>
@@ -250,7 +202,7 @@ xxd -l 8 -p init_boot.img.lz4
 # 04224d1864...   <- 64 = content-size MISSING  ❌
 ```
 
-*(Verified empirically on this device with `lz4` 1.10.0 — see [docs/TOOLS.md](docs/TOOLS.md).)*
+See [docs/TOOLS.md](docs/TOOLS.md) for a tool-independent verification note.
 
 ---
 
@@ -291,7 +243,7 @@ Also open the **Magisk app** — it must read `Installed`, not `Not Installed`.
 
 ## What rooting unlocks
 
-The forensics that were impossible on this device before:
+For compatible rooted devices, additional low-level diagnostics may be available:
 
 ```bash
 cat /proc/net/tcp          # live socket table  (was SELinux-blocked)

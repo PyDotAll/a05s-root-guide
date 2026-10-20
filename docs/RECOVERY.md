@@ -112,10 +112,9 @@ That's DFU. Odin can flash from here.
 A **hard brick** (no download mode, no Odin, nothing) cannot be fixed by software. It needs
 a service centre or authorised reflash of the eMMC/UB bootloader.
 
-Practical warning: **flashing firmware that doesn't match your model/region is how phones
-get hard-bricked.** This is why every doc here names `SM-A057F` / `<YOUR_FIRMWARE_BUILD>` and your
-carrier's CSC explicitly — your build is carrier-branded (`<YOUR_CSC>`), so a
-CSC mismatch can break VoLTE and mobile-data provisioning, not just region settings.
+Practical warning: **flashing firmware that doesn't match your model/region can hard-brick a
+phone.** Confirm the model, build, and CSC in Settings and use a matching firmware package.
+A CSC mismatch can alter VoLTE, carrier settings, and mobile-data provisioning.
 
 ---
 
@@ -134,9 +133,9 @@ Reassurance, since recovery anxiety is what stops people finishing:
 ## Prevention checklist
 
 - [ ] Stock firmware for your exact build **downloaded and extracted on the PC**
-- [ ] Model verified `SM-A057F`
-- [ ] Firmware `<YOUR_FIRMWARE_BUILD>` / patch `<YOUR_PATCH_DATE>`
-- [ ] CSC confirmed from Settings (carrier-branded build)
+- [ ] Model verified against the device and firmware package
+- [ ] Firmware build and patch level verified locally
+- [ ] CSC confirmed from Settings and matched to the firmware
 - [ ] LZ4 magic verified `04224d186c`
 - [ ] Second USB cable available
 - [ ] Odin + Samsung drivers working **before** flashing anything

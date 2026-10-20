@@ -55,7 +55,7 @@ samloader flash --file BL_xxx.tar.md5
 ```
 
 > **Don't paste your serial into a shared terminal, screenshot, or this repo.**
-> See [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#serial-number--deliberately-not-stored-here).
+> See [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#keep-identifiers-private).
 
 ### Bifrost — GUI option
 

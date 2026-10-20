@@ -20,12 +20,11 @@ Magisk app must show **Installed**. If it doesn't, see
 
 **OTA is gone.** Root disabled it. From now on the only update path is manual:
 
-1. Download new stock firmware for `SM-A057F` / your CSC (SamFW / Frija)
+1. Download stock firmware matching the device model and CSC (from a trusted source)
 2. Flash full stock via Odin (`BL`, `AP`, `CP`, `CSC`)
 3. Re-patch and re-root
 
-Put this in your calendar — check monthly. Your current patch is **<YOUR_PATCH_DATE>**;
-don't let it drift further.
+Check for updates regularly and apply a compatible current build.
 
 ---
 
@@ -46,17 +45,17 @@ Rooting trips **Knox** and breaks **Play Integrity**. Expect:
 | **Play Integrity Fix (Zygisk)** | `Kdrag0n/PlayIntegrityFix` on GitHub. Device must pass **hardware** integrity — must be a **GSM/A057F**, **not** a US carrier variant. |
 | **LSPosed + Shamiko / Hideroot** | Hides root from apps. Play Integrity is *not* fixed by hiding alone. |
 
-⚠️ On a **non-GSM US carrier variant** Play Integrity **cannot** be spoofed — the hardware
-attestation is hardware-locked. Yours is GSM, so the Zygisk route is viable.
+⚠️ Hardware attestation depends on the exact variant. Do not assume a method for one region or
+carrier variant applies to another.
 
 **Keep receipts.** Only install modules from the official repos. Fake "root hiding" modules
 are a common malware vector — and they'd defeat the purpose of rooting safely.
 
 ---
 
-## 4. Now do the forensics you originally wanted
+## 4. Optional diagnostics
 
-This was the actual goal. Root unlocks everything that was blocked before.
+Root may make additional diagnostics available, depending on the device and software.
 
 ### Live network state
 
@@ -156,7 +155,7 @@ You're rooted and the phone may get wiped again. Keep this guide safe:
 git clone https://github.com/PyDotAll/a05s-root-guide.git
 ```
 
-It's private — you'll need a token or SSH key configured.
+The repository is public; do not configure credentials just to read it.
 
 ---
 

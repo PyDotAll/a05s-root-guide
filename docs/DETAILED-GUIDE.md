@@ -84,11 +84,12 @@ firmware download and Magisk patching don't require the unlock.
 
 ## 4. Backup
 
-Your shared storage currently holds:
+If useful, record backup progress privately. Do not add personal file counts or device inventory
+to public documentation.
 
 ```
-Pictures XXX | DCIM XXX | Download XXX | Android XXX | Documents XX
-Movies    XXX | Music    XXX | Ringtones XXX | PSP XXX        (XXX.XX GB)
+Backup location: ____________________
+Sync verified: ______________________
 ```
 
 - [ ] Google Photos / Drive sync **complete** — verify, don't assume
@@ -120,22 +121,22 @@ samloader list --model SM-A057F --region <CSC>
 
 # download + decrypt the build you need
 samloader download --model SM-A057F --region <CSC> \
-  --firmware <YOUR_FIRMWARE_BUILD> --imei <SERIAL>
+  --firmware <FIRMWARE_BUILD> --imei <IMEI>
 ```
 
 | Field | Value |
 |---|---|
-| Model | `SM-A057F` |
-| Firmware | `<YOUR_FIRMWARE_BUILD>` (or newer) |
-| Patch level | `<YOUR_PATCH_DATE>` (or newer) |
-| CSC | read from Settings → About phone → Software information (your build is **carrier-branded**: `<YOUR_CSC>`) |
-| Serial **or** IMEI | Serial from Software information, or dial `*#06#` for IMEI |
+| Model | Confirm in Settings and match the firmware package |
+| Firmware | Match the current build or a verified compatible update |
+| Patch level | Check locally before proceeding |
+| CSC | Read from Settings → About phone → Software information |
+| Serial **or** IMEI | Enter only into a trusted firmware tool if required |
 
 > **Neither the serial nor the IMEI belongs in a repo, a screenshot, or a support chat.**
-> Share them only with the tool that needs them, over a trusted connection. See
-> [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#serial-number--deliberately-not-stored-here).
+> Enter them only into a trusted tool that requires them. See
+> [DEVICE-SPECIFICATIONS.md](DEVICE-SPECIFICATIONS.md#keep-identifiers-private).
 
-Target firmware **`<YOUR_FIRMWARE_BUILD>`**, patch level **<YOUR_PATCH_DATE>**.
+Use a firmware package matching the device's model, region, and current build.
 
 **Alternatives:** [Bifrost](https://github.com/zacharee/Bifrost) (MIT, GUI) ·
 [samloader](https://github.com/nlscc/samloader) (GPL) ·
@@ -218,7 +219,7 @@ tar -cf magisk_patched.tar init_boot.img.lz4
 
 **Checkpoint:** `magisk_patched.tar` exists.
 
-*(All tools verified present on your device — see [TOOLS.md](TOOLS.md).)*
+See [TOOLS.md](TOOLS.md) for the LZ4 header check.
 
 ---
 

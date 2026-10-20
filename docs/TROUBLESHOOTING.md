@@ -137,7 +137,7 @@ cryptographically bound to the firmware.
 
 ### First boot takes >20 minutes
 
-Usually fine on a slow device with a 52 GB data volume. Let it finish. Force-rebooting
+Usually fine on a slower device. Let it finish. Force-rebooting
 during first-boot setup can strand it — if it exceeds ~40 min, see [RECOVERY.md](RECOVERY.md).
 
 ### `adb devices` shows nothing
@@ -172,8 +172,8 @@ need enabling; toggle USB config to **File transfer**; accept the RSA prompt.
 
 Run through this — it prevents most failures:
 
-- [ ] Firmware **model** is `SM-A057F`
-- [ ] Firmware **CSC** is `BD`
+- [ ] Firmware **model** matches the device
+- [ ] Firmware **CSC** matches the device's current region/carrier
 - [ ] Firmware **build** matches your current build number
 - [ ] Patched **`init_boot.img`**, tens of MB, not a few KB
 - [ ] LZ4 magic starts **`04224d186c`**

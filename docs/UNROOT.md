@@ -32,7 +32,7 @@ Auto Reboot **on**. Normal boot.
 
 The reliable path. Wipes data unless you use `HOME_CSC`.
 
-1. Download stock firmware for `SM-A057F` / `<YOUR_FIRMWARE_BUILD>` / your carrier CSC
+1. Download stock firmware matching the device model, current build, and CSC
 2. Extract `BL`, `AP`, `CP`, `CSC`
 3. Download Mode (**Vol Up + Vol Down** + USB → **Vol Up**)
 4. Odin as Administrator, load all four slots

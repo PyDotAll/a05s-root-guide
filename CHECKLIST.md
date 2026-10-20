@@ -35,8 +35,8 @@ trustworthiness. Open-source flashing tools are less battle-tested; accept that 
 - [ ] Data-capable USB cable (test it!)
 - [ ] ~XXX GB free on PC
 - [ ] Second USB cable as backup
-- [ ] Serial + IMEI written down **off the phone** (password manager / paper)
-      *Needed for firmware lookup. Not stored in this repo — see DEVICE-SPECIFICATIONS.md.*
+- [ ] If firmware lookup requires a serial or IMEI, enter it directly into the trusted tool.
+      Never add it to this repository, an issue, or a shared screenshot.
 
 ---
 
@@ -74,10 +74,10 @@ At risk: **XXX GB** total · Pictures XXX · DCIM XXX · Download XXX · XXX.XX 
 
 ## 5. Firmware
 
-- [ ] Model = `SM-A057F`
-- [ ] Firmware = `<YOUR_FIRMWARE_BUILD>` (or newer)
-- [ ] Patch = `<YOUR_PATCH_DATE>` (or newer)
-- [ ] **CSC confirmed in Settings** — carrier-branded build `<YOUR_CSC>`
+- [ ] Model matches the phone and firmware package
+- [ ] Firmware build matches the phone (or is a verified compatible update)
+- [ ] Patch level is current for the device
+- [ ] **CSC confirmed in Settings** and matches the firmware package
 - [ ] Build matches step 2
 - [ ] Downloaded (~XXX GB — use WiFi, not cellular)
 - [ ] Extracted: `BL`, `AP`, `CP`, `CSC`, `HOME_CSC`
