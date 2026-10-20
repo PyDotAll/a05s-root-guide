@@ -176,8 +176,8 @@ Only root gives you `/proc/net/tcp`, per-app traffic attribution, and full files
 
 ## Still stuck?
 
-1. [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — symptom-first
-2. [docs/RECOVERY.md](docs/RECOVERY.md) — bricked device
+1. [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — symptom-first
+2. [RECOVERY.md](RECOVERY.md) — bricked device
 3. [XDA thread](https://xdaforums.com/t/request-root-method-for-galaxy-a05s-sm-a057f-ds-one-ui-7-android-15.4755956/)
 
 Next: back to [README](../README.md)
