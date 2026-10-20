@@ -33,7 +33,7 @@ trustworthiness. Open-source flashing tools are less battle-tested; accept that 
       Absent = carrier-locked = **not rootable**. Stop.
 - [ ] Windows PC available
 - [ ] Data-capable USB cable (test it!)
-- [ ] ~25 GB free on PC
+- [ ] ~XXX GB free on PC
 - [ ] Second USB cable as backup
 - [ ] Serial + IMEI written down **off the phone** (password manager / paper)
       *Needed for firmware lookup. Not stored in this repo — see DEVICE-SPECIFICATIONS.md.*
@@ -70,7 +70,7 @@ trustworthiness. Open-source flashing tools are less battle-tested; accept that 
 - [ ] Irreplaceable files copied off device
 - [ ] Banking credentials recoverable
 
-At risk: **52 GB** total · Personal storage inventory removed
+At risk: **XXX GB** total · Pictures XXX · DCIM XXX · Download XXX · XXX.XX GB shared storage
 
 ## 5. Firmware
 
@@ -79,7 +79,7 @@ At risk: **52 GB** total · Personal storage inventory removed
 - [ ] Patch = `<YOUR_PATCH_DATE>` (or newer)
 - [ ] **CSC confirmed in Settings** — carrier-branded build `<YOUR_CSC>`
 - [ ] Build matches step 2
-- [ ] Downloaded (~7 GB — use WiFi, not cellular)
+- [ ] Downloaded (~XXX GB — use WiFi, not cellular)
 - [ ] Extracted: `BL`, `AP`, `CP`, `CSC`, `HOME_CSC`
 - [ ] **Kept on PC permanently** for recovery
 
