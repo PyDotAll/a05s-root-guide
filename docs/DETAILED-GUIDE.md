@@ -31,7 +31,7 @@ Install, in this order:
 3. **Android platform-tools** (`adb`) — on the PC, or on the phone via Termux
 4. **Frija** — for firmware retrieval from Samsung's official server
 
-**Free disk:** ~25 GB. The `AP` file alone is ~7 GB.
+**Free disk:** ~XXX GB. The `AP` file alone is ~XXX GB.
 
 ### 1.2 On the phone
 
@@ -87,7 +87,8 @@ firmware download and Magisk patching don't require the unlock.
 Your shared storage currently holds:
 
 ```
-Personal file inventory removed
+Pictures XXX | DCIM XXX | Download XXX | Android XXX | Documents XX
+Movies    XXX | Music    XXX | Ringtones XXX | PSP XXX        (XXX.XX GB)
 ```
 
 - [ ] Google Photos / Drive sync **complete** — verify, don't assume
